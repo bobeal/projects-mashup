@@ -9,7 +9,7 @@ import play.api.libs.ws.WS
 object OAuth2Client {
 
   val PLAY_CONF = Play.current.configuration
-  val SCOPE = "https://www.googleapis.com/auth/calendar+https://www.google.com/m8/feeds/+https://docs.google.com/feeds/+https://mail.google.com/mail/feed/atom+https://spreadsheets.google.com/feeds/+https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email"
+  val SCOPE = "https://www.googleapis.com/auth/calendar+https://www.google.com/m8/feeds/+https://docs.google.com/feeds/+https://docs.googleusercontent.com/+https://mail.google.com/mail/feed/atom+https://spreadsheets.google.com/feeds/+https://www.googleapis.com/auth/userinfo.profile+https://www.googleapis.com/auth/userinfo.email"
   val REDIRECT_URI = "http://localhost:9000/register/google/callback"
   val AUTHORIZATION_URI = "https://accounts.google.com/o/oauth2/auth"
   val TOKEN_URI = "https://accounts.google.com/o/oauth2/token"
