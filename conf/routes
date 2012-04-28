@@ -9,5 +9,9 @@ GET     /login                      controllers.Application.login
 GET     /register/google            controllers.Application.registerWithGoogle
 GET     /register/google/callback   controllers.Application.googleCallback(error:String = "", code:String)
 
+GET     /projects                   controllers.Projects.index
+GET     /projects/create            controllers.Projects.newProject
+POST    /projects/create            controllers.Projects.create
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

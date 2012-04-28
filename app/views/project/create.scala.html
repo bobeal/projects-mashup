@@ -1,0 +1,12 @@
+@()(implicit user: User)
+
+@views.html.main {
+    <h1>Cr&eacute;ation d'un projet</h1>
+    <form class="form-vertical" action="@routes.Projects.create" method="POST">
+        <fieldset>
+            <label>Nom</label>
+            <input type="text" name="name" class="span3"/>
+            <input type="submit" value="Cr&eacute;er">
+        </fieldset>
+    </form>
+}

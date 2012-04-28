@@ -5,31 +5,34 @@
 <html>
     <head>
         <title>Projects mashup</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
         <script src="@routes.Assets.at("javascripts/jquery-1.7.1.min.js")" type="text/javascript"></script>
         <script src="@routes.Assets.at("javascripts/bootstrap.min.js")" type="text/javascript"></script>
     </head>
     <body>
+
         <div class="navbar navbar-fixed-top">
           <div class="navbar-inner">
             <div class="container">
-                <a class="brand" href="#">
-                  ZPM
-                </a>
+                <a class="brand" href="#">Projects mashup</a>
                 <ul class="nav">
-                  <li class="active">
-                    <a href="/">Accueil</a>
-                  </li>
-                  <li><a href="#">Applications</a></li>
+                  <li class="active"><a href="/">Accueil</a></li>
+                  <li><a href="@routes.Projects.index">Projets</a></li>
                 </ul>
                 <span class="pull-right">@user.email (@user.name)</span>
             </div>
           </div>
         </div>
-        <div class="container">
-            @content
+
+        <div class="container" style="margin-top:5em;">
+          @content
+
+          <hr>
+
+          <footer>
+            <p>Bob&eacute;al</p>
+          </footer>
         </div>
     </body>
 </html>
