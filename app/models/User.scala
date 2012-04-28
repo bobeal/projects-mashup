@@ -2,11 +2,11 @@ package models
 
 import play.api.db._
 import play.api.Play.current
-
 import anorm._
 import anorm.SqlParser._
+import play.api.mvc.Session
 
-case class User(name: String, email: String)
+case class User(email: String, name: String)
 
 object User {
 
@@ -14,9 +14,9 @@ object User {
    * Parse a User from a ResultSet
    */
   val simple = {
-    get[String]("user.name") ~
-    get[String]("user.email") map {
-      case name~email => User(name, email)
+    get[String]("users.email") ~
+    get[String]("users.name") map {
+      case email~name => User(email, name)
     }
   }
 
@@ -24,8 +24,8 @@ object User {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          insert into user values (
-            {name}, {email}
+          insert into users values (
+            {email}, {name}
           )
         """).on(
           'email -> user.email,
@@ -38,8 +38,14 @@ object User {
 
   def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from user where email = {email}").on(
+      SQL("select * from users where email = {email}").on(
         'email -> email).as(User.simple.singleOpt)
     }
+  }
+}
+
+trait Users {
+  implicit def user(implicit session: Session): User = {
+    User.findByEmail(session.get("email").get).get
   }
 }

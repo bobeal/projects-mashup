@@ -2,12 +2,12 @@
 
 # --- !Ups
 
-create table user (
+create table users (
   email                     varchar(255) not null primary key,
   name                      varchar(255) not null
 );
 
 # --- !Downs
 
-drop table if exists user;
+drop table if exists users;
 
