@@ -6,12 +6,9 @@ import play.api.data.Forms._
 import views._
 import models.Users
 import models.Project
+import anorm.NotAssigned
 
 object Projects extends Controller with Secured with Users {
-
-  val projectForm = Form(
-    mapping(
-      "name" -> nonEmptyText)(Project.apply)(Project.unapply))
 
   def index = IsAuthenticated { username => implicit request =>
       Ok(html.project.index(Project.list()))
@@ -22,10 +19,10 @@ object Projects extends Controller with Secured with Users {
   }
 
   def create = IsAuthenticated { username => implicit request =>
-      projectForm.bindFromRequest.fold(
+      Form("name" -> nonEmptyText).bindFromRequest.fold(
           errors => BadRequest,
-          project => {
-            Project.create(project)
+          name => {
+            Project.create(Project(NotAssigned, name))
             Redirect(routes.Projects.index)
           }
       )

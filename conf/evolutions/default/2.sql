@@ -3,10 +3,14 @@
 # --- !Ups
 
 create table project (
-  name                     varchar(255) not null primary key
+  id                       bigint not null primary key,
+  name                     varchar(255) not null
 );
+
+create sequence project_seq start with 1000;
 
 # --- !Downs
 
 drop table if exists project;
+drop sequence if exists project_seq;
 
