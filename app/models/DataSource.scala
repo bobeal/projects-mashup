@@ -59,10 +59,20 @@ object DataSource {
         """).on('project_id -> projectId).as(DataSource.simple *)
     }
   }
+
+  def findById(id:String) : Option[DataSource] = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select * from data_source where id = {id}
+        """).on('id -> id).as(DataSource.simple.singleOpt)
+    }
+  }
 }
 
 trait DataSourceProvider {
   def listSources(user: User): List[DataSource]
   def getSource(user:User, sourceId:String): DataSource
+  def getSourceEntries(user:User, sourceId:String) : List[DataSourceEntry]
 }
 

@@ -1,0 +1,17 @@
+@(entriesByProject: scala.collection.mutable.HashMap[Project, scala.collection.mutable.Set[DataSourceEntry]])(implicit user: User)
+
+@views.html.main {
+  <h1>Tableau de bord</h1>
+  @for((project,dataSourceEntries) <- entriesByProject) {
+    <h2>@project.name</h2>
+    <ul class="timeline">
+      @for(dataSourceEntry <- dataSourceEntries) {
+        <li>
+          <span class="tag tag-timeline-entry-source-@dataSourceEntry.sourceType.toString">@dataSourceEntry.dataSourceName</span>
+          <span class="timeline-entry-label">@dataSourceEntry.label</span>
+          <span class="timeline-entry-modification-date">@dataSourceEntry.modificationDate</span>
+        </li>
+      }
+    </ul>
+  }
+}
