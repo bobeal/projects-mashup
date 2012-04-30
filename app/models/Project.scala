@@ -48,4 +48,13 @@ object Project {
         """).as(Project.simple *)
     }
   }
+
+  def findById(id:Long) : Option[Project] = {
+    DB.withConnection { implicit connection =>
+      SQL(
+        """
+          select * from project where id = {id}
+        """).on('id -> id).as(Project.simple.singleOpt)
+    }
+  }
 }

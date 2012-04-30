@@ -14,26 +14,21 @@ object Application extends Controller {
 
   def registerWithGoogle = Action {
     val authorizationUrl = OAuth2Client.authorizationUrl
-    Logger.debug("Redirecting to " + authorizationUrl)
     Redirect(authorizationUrl)
   }
   
   def googleCallback(error:String, code:String) = Action { request =>
-    Logger.debug("got result : " + request.queryString)
     if (error != "") {
       Ok(views.html.login(error))
     } else {
       Async {
-        Logger.debug("calling access token with " + OAuth2Client.accessTokenParameters(code))
         WS.url(OAuth2Client.TOKEN_URI)
             .withHeaders("Content-Type" -> "application/x-www-form-urlencoded")
             .post(OAuth2Client.accessTokenParameters(code)).map { response =>
-          Logger.debug("got access token response : " + response.body)
           val accessToken = response.json \ "access_token"
           var user:User = WS.url(OAuth2Client.EMAIL_URI)
               .withHeaders("Authorization" -> "Bearer %s".format(accessToken))
               .get().map { response =>
-            Logger.debug("got email response : " + response.body)
             val email = (response.json \ "email").as[String]
             var user = User.findByEmail(email) match {
               case Some(user) => user
@@ -45,10 +40,14 @@ object Application extends Controller {
             user
           }.value.get
 
-          Redirect("/").withSession(
-              "accessToken" -> accessToken.as[String],
-              "email" -> user.email
-          )
+          Authorization.findByUserAndApplication(user, ApplicationType.Google) match {
+            case None => Authorization.create(Authorization(user, ApplicationType.Google, accessToken.as[String]))
+            case authorization => {
+              Authorization.updateApiKey(authorization.get, accessToken.as[String])
+            }
+          }
+
+          Redirect("/").withSession("email" -> user.email)
         }
       }
     }

@@ -1,0 +1,27 @@
+@(project: Project, sortedDataSources: Set[(String, List[DataSource])], availableDataSources: Map[String, List[DataSource]])(implicit user: User)
+
+@views.html.main {
+  <h1>Configuration du projet @project.name</h1>
+  @sortedDataSources.map { tuple =>
+    <h2>@tuple._1</h2>
+    <ul>
+      @tuple._2.map { dataSource =>
+        <li>@dataSource.name</li>
+      }
+    </ul>
+    @if(availableDataSources.contains(tuple._1)) {
+    <form class="form-vertical" action="@routes.Projects.addGdocsCollection(project.id.get)" method="POST">
+      <fieldset>
+        <legend>Ajouter une source Google Docs</legend>
+        <label for="gdocs_collection">Collection :</label>
+        <select name="gdocs_collection">
+        @availableDataSources.get(tuple._1).get.map { dataSource =>
+          <option value="@dataSource.id">@dataSource.name</option>
+        }
+        </select>
+        <input type="submit" value="Ajouter"/>
+      </fieldset>
+    </form>
+    }
+  }
+}

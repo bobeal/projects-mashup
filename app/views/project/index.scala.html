@@ -5,7 +5,7 @@
   <h1>Projets</h1>
   <ul>
     @projects.map { project =>
-      <li>@project.name (@project.id)</li>
+      <li><a href="@routes.Projects.configure(project.id.get)">@project.name (@project.id)</a></li>
     }
   </ul>
 }
