@@ -1,0 +1,23 @@
+@(authorizationsByApplication: Set[(String, Option[Authorization])])(implicit user: User)
+
+@views.html.main {
+  <h1>Autorisations</h1>
+  @for((application,authorization) <- authorizationsByApplication) {
+    <h2>@application.toString</h2>
+    @authorization match {
+      case None => {
+        <form class="form-vertical" action="@routes.Authorizations.add(application.toString)" method="POST">
+          <fieldset>
+            <legend>Ajouter une cl&eacute; d'API</legend>
+            <label for="apiKey">Cl&eacute; :</label>
+            <input type="text" name="apiKey" value="" />
+            <input type="submit" value="Ajouter"/>
+          </fieldset>
+        </form>
+      }
+      case authorization => {
+        <p>Cl&eacute; : @authorization.get.apiKey</p>
+      }
+    }
+  }
+}
