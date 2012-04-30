@@ -15,7 +15,7 @@ import play.api.Logger
 object Projects extends Controller with Secured with Users {
 
   def index = IsAuthenticated { username => implicit request =>
-      Ok(html.project.index(Project.list()))
+      Ok(html.project.index(Project.list(user)))
   }
 
   def newProject = IsAuthenticated { username => implicit request =>
@@ -26,7 +26,7 @@ object Projects extends Controller with Secured with Users {
       Form("name" -> nonEmptyText).bindFromRequest.fold(
           errors => BadRequest,
           name => {
-            Project.create(Project(NotAssigned, name))
+            Project.create(Project(NotAssigned, name, user))
             Redirect(routes.Projects.index)
           }
       )

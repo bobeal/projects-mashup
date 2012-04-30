@@ -7,7 +7,8 @@ import play.api.db.DB
 
 case class Project(
     id: Pk[Long], 
-    name:String
+    name: String,
+    user: User
 )
 
 object Project {
@@ -17,8 +18,9 @@ object Project {
    */
   val simple = {
     get[Pk[Long]]("project.id") ~
-    get[String]("project.name") map {
-      case id~name => Project(id,name)
+    get[String]("project.name") ~
+    get[String]("project.user_email") map {
+      case id~name~user_email => Project(id, name, User.findByEmail(user_email).get)
     }
   }
 
@@ -30,22 +32,23 @@ object Project {
       SQL(
         """
           insert into project values (
-            {id}, {name}
+            {id}, {name}, {user_email}
           )
         """).on(
           'id -> id,
-          'name -> project.name).executeUpdate()
+          'name -> project.name,
+          'user_email -> project.user.email).executeUpdate()
 
       project.copy(id = Id(id))
     }
   }
   
-  def list() : List[Project] = {
+  def list(user:User) : List[Project] = {
     DB.withConnection { implicit connection =>
       SQL(
         """
-          select * from project
-        """).as(Project.simple *)
+          select * from project where user_email = {user_email}
+        """).on('user_email -> user.email).as(Project.simple *)
     }
   }
 
