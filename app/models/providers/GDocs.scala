@@ -15,7 +15,7 @@ import java.util.Date
 object GDocs extends DataSourceProvider {
 
   // 2012-04-27T16:06:33.829Z
-  val dateFormatter = new SimpleDateFormat("yyyy-MM-DD'T'HH:mm:ss.SSS'Z'")
+  val dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
   def listSources(user: User): List[DataSource] = {
     Authorization.findByUserAndApplication(user, ApplicationType.Google) match {
@@ -54,7 +54,7 @@ object GDocs extends DataSourceProvider {
                        "GData-Version" -> "3.0")
           .withQueryString("showfolders" -> "true")
           .get().map { response =>
-            Logger.debug("got resource " + response.xml)
+            // Logger.debug("got resource " + response.xml)
             val id = (response.xml \ "resourceId").head.text
             val title = (response.xml \ "title").head.text
             val url = (response.xml \ "id").head.text
@@ -79,7 +79,7 @@ object GDocs extends DataSourceProvider {
           .withHeaders("Authorization" -> "Bearer %s".format(authorization.get.apiKey),
                        "GData-Version" -> "3.0")
           .get().map { response =>
-            Logger.debug("got resource " + response.xml)
+            // Logger.debug("got resource " + response.xml)
             (response.xml \ "entry").toList.map { node =>
               val label = (node \ "title").head.text
               val url = (node \ "id").head.text
