@@ -8,4 +8,6 @@ case class DataSourceEntry(
   label: String,
   url: String,
   modificationDate: Date
-)
+)  extends Ordered[DataSourceEntry] {
+  def compare(that: DataSourceEntry) = that.modificationDate.compareTo(this.modificationDate)
+}

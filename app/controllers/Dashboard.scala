@@ -10,20 +10,27 @@ import models.DataSource
 import models.providers.GDocs
 import models.DataSourceEntry
 import scala.collection.mutable.HashMap
-import scala.collection.mutable.Set
+import scala.collection.mutable.Seq
+import models.providers.Basecamp
+import scala.collection.SortedSet
 
 object Dashboard extends Controller with Secured with Users {
 
   def index = IsAuthenticated { username => implicit request =>
-    val entriesByProject = HashMap.empty[Project, Set[DataSourceEntry]]
+    val entriesByProject = HashMap.empty[Project, Seq[DataSourceEntry]]
     Project.list(user).map { project =>
       DataSource.findByProject(project.id.get).map { dataSource =>
-        GDocs.getSourceEntries(user, dataSource.id).map { dataSourceEntry =>
+        val dataSourceEntries = dataSource.sourceType.toString match {
+          case "Gdocs_Collection" => GDocs.getSourceEntries(user, dataSource.id)
+          case "Basecamp_Project" => Basecamp.getSourceEntries(user, dataSource.id)
+        }
+        dataSourceEntries.map { dataSourceEntry =>
           if (!entriesByProject.isDefinedAt(project))
-            entriesByProject.put(project, Set.empty[DataSourceEntry])
-          entriesByProject.get(project).get += dataSourceEntry
+            entriesByProject.put(project, Seq.empty[DataSourceEntry])
+          entriesByProject(project) = (dataSourceEntry +: entriesByProject.get(project).get).sorted
         }
       }
+      
     }
 
     Ok(views.html.dashboard.index(entriesByProject))

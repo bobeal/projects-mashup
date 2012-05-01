@@ -11,6 +11,7 @@ import models.SourceType
 import models.DataSource
 import models.providers.GDocs
 import play.api.Logger
+import models.providers.Basecamp
 
 object Projects extends Controller with Secured with Users {
 
@@ -37,7 +38,9 @@ object Projects extends Controller with Secured with Users {
       case None => NotFound
       case p => {
         val projectDataSources = DataSource.findByProject(id)
-        val availableDataSources = Map(SourceType.Gdocs_Collection.toString() -> GDocs.listSources(user))
+        val availableDataSources = Map(
+            SourceType.Gdocs_Collection.toString() -> GDocs.listSources(user),
+            SourceType.Basecamp_Project.toString() -> Basecamp.listSources(user))
         val sortedDataSources = SourceType.values.map { sourceType =>
           (sourceType.toString(), projectDataSources.filter { dataSource =>
             dataSource.sourceType.toString() == sourceType.toString()
@@ -48,11 +51,15 @@ object Projects extends Controller with Secured with Users {
     }
   }
   
-  def addGdocsCollection(id:Long) = IsAuthenticated { username => implicit request =>
-    Form("gdocs_collection" -> nonEmptyText).bindFromRequest.fold(
+  def addSource(id:Long) = IsAuthenticated { username => implicit request =>
+    Form(tuple("sourceType" -> nonEmptyText,
+         "dataSource" -> nonEmptyText)).bindFromRequest.fold(
         errors => BadRequest,
-        gdocs_collection => {
-          val dataSource = GDocs.getSource(user, gdocs_collection)
+        tuple => {
+          val dataSource = tuple match {
+            case ("Gdocs_Collection", _) => GDocs.getSource(user, tuple._2)
+            case ("Basecamp_Project", _) => Basecamp.getSource(user, tuple._2)
+          }
           DataSource.create(DataSource(dataSource.sourceType, dataSource.id, dataSource.url,
               dataSource.name, Project.findById(id).get))
         }

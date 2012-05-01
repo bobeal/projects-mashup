@@ -12,8 +12,8 @@ GET     /register/google/callback   controllers.Application.googleCallback(error
 GET     /projects                   controllers.Projects.index
 GET     /projects/create            controllers.Projects.newProject
 POST    /project                    controllers.Projects.create
-GET     /project/:id                controllers.Projects.configure(id:Long)
-POST    /project/:id/gdocsCollection   controllers.Projects.addGdocsCollection(id:Long)
+GET     /project/:id/configure      controllers.Projects.configure(id:Long)
+POST    /project/:id/source         controllers.Projects.addSource(id:Long)
 
 GET     /authorizations             controllers.Authorizations.index
 POST    /authorization/:application controllers.Authorizations.add(application:String)

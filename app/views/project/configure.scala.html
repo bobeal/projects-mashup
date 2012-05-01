@@ -4,21 +4,23 @@
   <h1>Configuration du projet @project.name</h1>
   @sortedDataSources.map { tuple =>
     <h2>@tuple._1</h2>
+    Sources configur&eacute;es
     <ul>
       @tuple._2.map { dataSource =>
         <li>@dataSource.name</li>
       }
     </ul>
     @if(availableDataSources.contains(tuple._1)) {
-    <form class="form-vertical" action="@routes.Projects.addGdocsCollection(project.id.get)" method="POST">
+    <form class="form-vertical" action="@routes.Projects.addSource(project.id.get)" method="POST">
       <fieldset>
-        <legend>Ajouter une source Google Docs</legend>
-        <label for="gdocs_collection">Collection :</label>
-        <select name="gdocs_collection">
+        <legend>Ajouter une source @tuple._1</legend>
+        <label for="dataSource">Source :</label>
+        <select name="dataSource">
         @availableDataSources.get(tuple._1).get.map { dataSource =>
           <option value="@dataSource.id">@dataSource.name</option>
         }
         </select>
+        <input type="hidden" name="sourceType" value="@tuple._1" />
         <input type="submit" value="Ajouter"/>
       </fieldset>
     </form>
