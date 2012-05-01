@@ -19,3 +19,11 @@ ul.timeline {
 .tag-timeline-entry-source-Gdocs_Collection {
   background: #20cc20; border-color:#20aa20;
 }
+
+.tag-timeline-entry-source-Basecamp_Project {
+  background: #ab8b00; border-color:#ab8b00;
+}
+
+.timeline-entry-modification-date {
+  float: right;
+}
