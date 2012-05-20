@@ -1,7 +1,7 @@
 @(projects: List[Project])(implicit user: User)
 
 @views.html.main {
-  <a class="btn btn-small pull-right" href="@routes.Projects.create">Cr&eacute;er un projet</a>
+  <a class="btn btn-small pull-right" href="@routes.Projects.newProject">Cr&eacute;er un projet</a>
   <h1>Projets</h1>
   <ul>
     @projects.map { project =>
