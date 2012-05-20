@@ -137,7 +137,7 @@ object Basecamp extends Application with DataSourceProvider {
                     }.map { node =>
                         val id = (node \ "id").head.text
                         var url = "https://colcoz.basecamphq.com/todo_items/" + id + ".xml"
-                        val label = (node \ "content").head.text + "(" + todoListEntry._2 + ")"
+                        val label = "[" + todoListEntry._2 + "] " + (node \ "content").head.text
                         val dueDate = (node \ "due-at").head.text match {
                           case "" => new java.util.Date()
                           case s => dateFormatter.parse((node \ "due-at").head.text)
