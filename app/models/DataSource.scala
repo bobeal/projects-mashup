@@ -74,5 +74,6 @@ trait DataSourceProvider {
   def listSources(user: User): List[DataSource]
   def getSource(user:User, sourceId:String): DataSource
   def getSourceEntries(user:User, sourceId:String) : List[DataSourceEntry]
+  def getSourceTaskEntries(user:User, sourceId:String) : List[DataSourceTask]
 }
 

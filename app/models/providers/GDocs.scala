@@ -12,6 +12,7 @@ import models.SourceType
 import models.DataSourceEntry
 import java.text.SimpleDateFormat
 import java.util.Date
+import models.DataSourceTask
 
 object GDocs extends Application with DataSourceProvider {
 
@@ -94,7 +95,25 @@ object GDocs extends Application with DataSourceProvider {
           }.value.get
       }
     }
-    
   }
 
+  def getSourceTaskEntries(user:User, sourceId:String) : List[DataSourceTask] = {
+    Authorization.findByUserAndApplication(user, ApplicationType.Google) match {
+      case None => null
+      case authorization => {
+        WS.url("https://docs.google.com/feeds/default/private/full/" + sourceId + "/contents")
+          .withHeaders("Authorization" -> "Bearer %s".format(authorization.get.apiKey),
+                       "GData-Version" -> "3.0")
+          .get().map { response =>
+            // Logger.debug("got resource " + response.xml)
+            (response.xml \ "entry").toList.map { node =>
+              val label = (node \ "title").head.text
+              val url = (node \ "id").head.text
+              var modificationDate = (node \ "updated").head.text
+              DataSourceTask(SourceType.Gdocs_Collection, DataSource.findById(sourceId).get.name, label, url, dateFormatter.parse(modificationDate))
+            }
+          }.value.get
+      }
+    }
+  }
 }

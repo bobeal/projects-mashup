@@ -1,18 +1,18 @@
-@(entriesByProject: scala.collection.mutable.HashMap[Project, scala.collection.mutable.Seq[DataSourceEntry]])(implicit user: User)
+@(entriesByProject: scala.collection.mutable.HashMap[Project, scala.collection.mutable.Seq[DataSourceTask]])(implicit user: User)
 
 @displayDate(date: java.util.Date) = {
   @{new java.text.SimpleDateFormat("dd/MM/yyyy' - 'HH:mm").format(date)}
 }
 @views.html.main {
   <h1>Tableau de bord</h1>
-  @for((project,dataSourceEntries) <- entriesByProject) {
+  @for((project,dataSourceTasks) <- entriesByProject) {
     <h2>@project.name</h2>
     <ul class="timeline">
-      @for(dataSourceEntry <- dataSourceEntries) {
+      @for(dataSourceTask <- dataSourceTasks) {
         <li>
-          <span class="tag tag-timeline-entry-source-@dataSourceEntry.sourceType.toString">@dataSourceEntry.dataSourceName</span>
-          <span class="timeline-entry-label">@dataSourceEntry.label</span>
-          <span class="timeline-entry-modification-date">@displayDate(dataSourceEntry.modificationDate)</span>
+          <span class="tag tag-timeline-entry-source-@dataSourceTask.sourceType.toString">@dataSourceTask.dataSourceName</span>
+          <span class="timeline-entry-label">@dataSourceTask.label</span>
+          <span class="timeline-entry-modification-date">@displayDate(dataSourceTask.dueDate)</span>
         </li>
       }
     </ul>
