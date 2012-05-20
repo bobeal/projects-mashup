@@ -5,15 +5,11 @@ import anorm.SqlParser._
 import play.api.Play.current
 import play.api.db.DB
 
-object ApplicationType extends Enumeration("Google", "Basecamp") {
-  type ApplicationType = Value
-  var Google, Basecamp = Value
-}
-
 case class Authorization(
   user: User,
   application: ApplicationType.Value,
-  apiKey: String
+  apiKey: String,
+  userId: Option[String]
 )
 
 object Authorization {
@@ -24,9 +20,10 @@ object Authorization {
   val simple = {
     get[String]("authorizations.user_email") ~
     get[String]("authorizations.application") ~
-    get[String]("authorizations.api_key") map {
-      case user_email~application~api_key => 
-        Authorization(User.findByEmail(user_email).get,ApplicationType.withName(application),api_key)
+    get[String]("authorizations.api_key") ~
+    get[Option[String]]("authorizations.user_id") map {
+      case user_email~application~api_key~user_id => 
+        Authorization(User.findByEmail(user_email).get,ApplicationType.withName(application),api_key,user_id)
     }
   }
 
@@ -35,12 +32,13 @@ object Authorization {
       SQL(
         """
           insert into authorizations values (
-          {user_email}, {application}, {api_key}
+          {user_email}, {application}, {api_key}, {user_id}
           )
         """).on(
           'user_email -> authorization.user.email,
           'application -> authorization.application.toString,
-          'api_key -> authorization.apiKey).executeUpdate()
+          'api_key -> authorization.apiKey,
+          'user_id -> authorization.userId).executeUpdate()
 
       authorization
     }

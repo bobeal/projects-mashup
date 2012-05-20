@@ -5,6 +5,7 @@ import play.api.libs.ws.WS
 import play.api.mvc._
 import models._
 import models.ws.OAuth2Client
+import models.providers.GDocs
 
 object Application extends Controller {
   
@@ -25,6 +26,7 @@ object Application extends Controller {
         WS.url(OAuth2Client.TOKEN_URI)
             .withHeaders("Content-Type" -> "application/x-www-form-urlencoded")
             .post(OAuth2Client.accessTokenParameters(code)).map { response =>
+          Logger.debug("Got response : " + response.body)
           val accessToken = response.json \ "access_token"
           var user:User = WS.url(OAuth2Client.EMAIL_URI)
               .withHeaders("Authorization" -> "Bearer %s".format(accessToken))
@@ -41,7 +43,7 @@ object Application extends Controller {
           }.value.get
 
           Authorization.findByUserAndApplication(user, ApplicationType.Google) match {
-            case None => Authorization.create(Authorization(user, ApplicationType.Google, accessToken.as[String]))
+            case None => Authorization.create(Authorization(user, ApplicationType.Google, accessToken.as[String], GDocs.userId(user)))
             case authorization => {
               Authorization.updateApiKey(authorization.get, accessToken.as[String])
             }

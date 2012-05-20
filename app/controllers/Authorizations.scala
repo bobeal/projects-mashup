@@ -6,6 +6,8 @@ import play.api.data.Forms._
 import play.api.mvc.Controller
 import models.Authorization
 import models.ApplicationType
+import models.providers.Basecamp
+import models.providers.GDocs
 
 object Authorizations extends Controller with Secured with Users {
 
@@ -23,7 +25,11 @@ object Authorizations extends Controller with Secured with Users {
     Form("apiKey" -> nonEmptyText).bindFromRequest.fold(
       errors => BadRequest,
       apiKey => {
-        Authorization.create(Authorization(user, ApplicationType.withName(application), apiKey))
+        val userId:Option[String] = application match {
+          case "Basecamp" => Basecamp.userId(user)
+          case "Google" => GDocs.userId(user)
+        }
+        Authorization.create(Authorization(user, ApplicationType.withName(application), apiKey, userId))
         Redirect(routes.Authorizations.index)
       }
     )

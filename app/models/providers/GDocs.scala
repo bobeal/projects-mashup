@@ -6,16 +6,21 @@ import models.User
 import play.api.libs.ws.WS
 import models.Authorization
 import models.ApplicationType
+import models.Application
 import play.api.Logger
 import models.SourceType
 import models.DataSourceEntry
 import java.text.SimpleDateFormat
 import java.util.Date
 
-object GDocs extends DataSourceProvider {
+object GDocs extends Application with DataSourceProvider {
 
   // 2012-04-27T16:06:33.829Z
   val dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
+  def userId(user: User): Option[String] = {
+    None
+  }
 
   def listSources(user: User): List[DataSource] = {
     Authorization.findByUserAndApplication(user, ApplicationType.Google) match {
